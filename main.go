@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"time"
 
 	"git.dcpri.me/some-fancy-tools/sg-audit/audit"
 )
@@ -24,14 +23,28 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	ins, err := aws.DescribeInstances()
+	if err != nil {
+		log.Fatal(err)
+	}
+	sgmap := map[string]int{}
+	for _, in := range ins {
+		for _, sg := range in.SecurityGroups {
+			if _, ok := sgmap[*sg.GroupId]; !ok {
+				sgmap[*sg.GroupId] = 0
+			}
+			sgmap[*sg.GroupId]++
+		}
+	}
 	fmt.Printf("Got %d Security Groups, starting audit...\n", len(sgs))
 	for i, sg := range sgs {
-		time.Sleep(time.Millisecond * 100)
+		// time.Sleep(time.Millisecond * 100)
 
 		fmt.Printf("Audited %d Security Groups\r", i)
 
 		rs := audit.Audit(sg)
 		for _, r := range rs {
+			r.InstanceCount = sgmap[r.SecurityGroupID]
 			r.Print()
 		}
 	}

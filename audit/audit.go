@@ -63,6 +63,26 @@ func (a *AWS) DescribeSecurityGroups() ([]*ec2.SecurityGroup, error) {
 	return g, nil
 }
 
+func (a *AWS) DescribeInstances() ([]*ec2.Instance, error) {
+	ins := []*ec2.Instance{}
+	next := aws.String("")
+	for next != nil {
+		o, err := a.ec2svc.DescribeInstances(
+			&ec2.DescribeInstancesInput{
+				NextToken: next,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		next = o.NextToken
+		for _, r := range o.Reservations {
+			ins = append(ins, r.Instances...)
+		}
+	}
+	return ins, nil
+}
+
 // Audit for auditing the security group
 func Audit(sg *ec2.SecurityGroup) []Result {
 	rs := []Result{}

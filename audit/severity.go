@@ -32,6 +32,11 @@ type Result struct {
 	IPRange         *ec2.IpRange
 	IPv6Range       *ec2.Ipv6Range
 	SeverityLevel   SeverityLevel
+	InstanceCount   int
+}
+
+func (r *Result) String() string {
+	return "to be implemented"
 }
 
 // Print for printing out the logs in color form.
@@ -46,6 +51,8 @@ func (r *Result) Print() {
 	var portRange string
 	if *r.Permissions.FromPort == -1 && *r.Permissions.ToPort == -1 {
 		portRange = fmt.Sprintf("all")
+	} else if *r.Permissions.FromPort == *r.Permissions.ToPort {
+		portRange = fmt.Sprintf("%d", *r.Permissions.FromPort)
 	} else {
 		portRange = fmt.Sprintf("%d-%d", *r.Permissions.FromPort, *r.Permissions.ToPort)
 	}
@@ -61,7 +68,9 @@ func (r *Result) Print() {
 				if strings.Contains(*ip.Description, "sgaudit:checked") {
 					color.Set(color.FgGreen)
 				}
-				fmt.Printf("[%s] [%s] %s/%s <- %s [%s]\n", levels[r.SeverityLevel], r.SecurityGroupID, portRange, *r.Permissions.IpProtocol, *ip.CidrIp, *ip.Description)
+				fmt.Printf("[%s] [%4d] [%-20s] %s/%s <- %s [%s]\n", levels[r.SeverityLevel], r.InstanceCount,
+					r.SecurityGroupID, portRange, *r.Permissions.IpProtocol,
+					*ip.CidrIp, *ip.Description)
 			}
 		}
 	}
@@ -77,9 +86,10 @@ func (r *Result) Print() {
 				if strings.Contains(*ipv6.Description, "sgaudit:checked") {
 					color.Set(color.FgGreen)
 				}
-				fmt.Printf("[%s] [%s] %s/%s <- %s [%s]\n", levels[r.SeverityLevel], r.SecurityGroupID, portRange, *r.Permissions.IpProtocol, *ipv6.CidrIpv6, *ipv6.Description)
+				fmt.Printf("[%s] [%4d] [%-20s] %s/%s <- %s [%s]\n", levels[r.SeverityLevel], r.InstanceCount,
+					r.SecurityGroupID, portRange, *r.Permissions.IpProtocol,
+					*ipv6.CidrIpv6, *ipv6.Description)
 			}
 		}
 	}
-
 }
