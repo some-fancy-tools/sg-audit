@@ -11,6 +11,8 @@ import (
 var (
 	profile = flag.String("profile", "", "AWS Profile to use")
 	region  = flag.String("region", "", "AWS Region to use")
+	nocolor = flag.Bool("no-color", false, "No Colored output")
+	csv     = flag.Bool("csv", false, "Output in CSV Format")
 )
 
 func main() {
@@ -36,17 +38,30 @@ func main() {
 			sgmap[*sg.GroupId]++
 		}
 	}
-	fmt.Printf("Got %d Security Groups, starting audit...\n", len(sgs))
+	if *csv {
+		fmt.Println(audit.CSVHeader)
+	} else {
+		fmt.Printf("Got %d Security Groups, starting audit...\n", len(sgs))
+	}
 	for i, sg := range sgs {
 		// time.Sleep(time.Millisecond * 100)
-
-		fmt.Printf("Audited %d Security Groups\r", i)
-
+		if !*csv {
+			fmt.Printf("Audited %d Security Groups\r", i)
+		}
 		rs := audit.Audit(sg)
 		for _, r := range rs {
 			r.InstanceCount = sgmap[r.SecurityGroupID]
-			r.Print()
+			r.AddColor()
+			if *csv {
+				fmt.Print(r.String(audit.ResultFormatCSV))
+			} else if *nocolor {
+				fmt.Print(r.String(audit.ResultFormatLog))
+			} else {
+				fmt.Print(r.String(audit.ResultFormatLogColor))
+			}
 		}
 	}
-	fmt.Printf("Audited %d Security Groups\n", len(sgs))
+	if !*csv {
+		fmt.Printf("Audited %d Security Groups\n", len(sgs))
+	}
 }

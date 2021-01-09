@@ -1,6 +1,7 @@
 package audit
 
 import (
+	"encoding/csv"
 	"fmt"
 	"strings"
 
@@ -16,14 +17,29 @@ const (
 	SeverityLevelCritical
 )
 
+const (
+	// ResultFormatCSV for CSV Formatted String
+	ResultFormatCSV ResultFormat = iota
+	// ResultFormatLog for Log Formatted String
+	ResultFormatLog
+	// ResultFormatLogColor for Log Formatted String with Color
+	ResultFormatLogColor
+)
+
 var (
 	levels = []string{
 		"WARN", "CRIT", "SKIP",
 	}
+
+	// CSVHeader with columns
+	CSVHeader = strings.Join([]string{"Level", "Instance Count", "Group ID", "Port Range", "Protocol", "IP CIDR", "Description"}, ",")
 )
 
 // SeverityLevel type
 type SeverityLevel int
+
+// ResultFormat for formatting result type
+type ResultFormat int
 
 // Result type to structure the log output
 type Result struct {
@@ -33,28 +49,26 @@ type Result struct {
 	IPv6Range       *ec2.Ipv6Range
 	SeverityLevel   SeverityLevel
 	InstanceCount   int
+	Color           *color.Color
+	PortRange       string
 }
 
-func (r *Result) String() string {
-	return "to be implemented"
-}
-
-// Print for printing out the logs in color form.
-func (r *Result) Print() {
-	defer color.Unset()
+func (r *Result) AddColor() {
 	if r.SeverityLevel == SeverityLevelCritical {
-		color.Set(color.FgRed)
+		r.Color = color.New(color.FgRed)
 	}
 	if r.SeverityLevel == SeverityLevelWarning {
-		color.Set(color.FgYellow)
+		r.Color = color.New(color.FgYellow)
 	}
-	var portRange string
+	if r.InstanceCount > 0 {
+		r.Color = r.Color.Add(color.Bold)
+	}
 	if *r.Permissions.FromPort == -1 && *r.Permissions.ToPort == -1 {
-		portRange = fmt.Sprintf("all")
+		r.PortRange = fmt.Sprintf("all")
 	} else if *r.Permissions.FromPort == *r.Permissions.ToPort {
-		portRange = fmt.Sprintf("%d", *r.Permissions.FromPort)
+		r.PortRange = fmt.Sprintf("%d", *r.Permissions.FromPort)
 	} else {
-		portRange = fmt.Sprintf("%d-%d", *r.Permissions.FromPort, *r.Permissions.ToPort)
+		r.PortRange = fmt.Sprintf("%d-%d", *r.Permissions.FromPort, *r.Permissions.ToPort)
 	}
 	if r.Permissions.IpRanges != nil && r.IPRange != nil {
 		for _, ip := range r.Permissions.IpRanges {
@@ -63,14 +77,11 @@ func (r *Result) Print() {
 					ip.Description = aws.String("-")
 				}
 				if strings.Contains(*ip.Description, "sgaudit:skip") {
-					color.Set(color.FgCyan)
+					r.Color = r.Color.Add(color.FgCyan)
 				}
 				if strings.Contains(*ip.Description, "sgaudit:checked") {
-					color.Set(color.FgGreen)
+					r.Color = r.Color.Add(color.FgGreen)
 				}
-				fmt.Printf("[%s] [%4d] [%-20s] %s/%s <- %s [%s]\n", levels[r.SeverityLevel], r.InstanceCount,
-					r.SecurityGroupID, portRange, *r.Permissions.IpProtocol,
-					*ip.CidrIp, *ip.Description)
 			}
 		}
 	}
@@ -80,16 +91,74 @@ func (r *Result) Print() {
 				if ipv6.Description == nil {
 					ipv6.Description = aws.String("-")
 				}
-				if strings.Contains(*ipv6.Description, "sgaudit:skip") {
-					color.Set(color.FgCyan)
+				if ipv6.Description != nil && strings.Contains(*ipv6.Description, "sgaudit:skip") {
+					r.Color = r.Color.Add(color.FgCyan)
 				}
 				if strings.Contains(*ipv6.Description, "sgaudit:checked") {
-					color.Set(color.FgGreen)
+					r.Color = r.Color.Add(color.FgGreen)
 				}
-				fmt.Printf("[%s] [%4d] [%-20s] %s/%s <- %s [%s]\n", levels[r.SeverityLevel], r.InstanceCount,
-					r.SecurityGroupID, portRange, *r.Permissions.IpProtocol,
-					*ipv6.CidrIpv6, *ipv6.Description)
 			}
 		}
 	}
+}
+
+func (r *Result) String(rf ResultFormat) string {
+	sb := strings.Builder{}
+	segments := [][]interface{}{}
+	var cw *csv.Writer
+	if rf == ResultFormatCSV {
+		cw = csv.NewWriter(&sb)
+	}
+	if rf == ResultFormatLogColor {
+		r.AddColor()
+	}
+	for _, ip := range r.Permissions.IpRanges {
+		if r.IPRange == nil || r.IPRange.CidrIp == nil {
+			continue
+		}
+		if *r.IPRange.CidrIp != *ip.CidrIp {
+			continue
+		}
+		if ip.Description == nil {
+			ip.Description = aws.String("-")
+		}
+		segments = append(segments, []interface{}{levels[r.SeverityLevel], r.InstanceCount,
+			r.SecurityGroupID, r.PortRange, *r.Permissions.IpProtocol,
+			*ip.CidrIp, *ip.Description})
+	}
+	for _, ip := range r.Permissions.Ipv6Ranges {
+		if r.IPv6Range == nil || r.IPv6Range.CidrIpv6 == nil {
+			continue
+		}
+		if *r.IPv6Range.CidrIpv6 != *ip.CidrIpv6 {
+			continue
+		}
+		if ip.Description == nil {
+			ip.Description = aws.String("-")
+		}
+		segments = append(segments, []interface{}{levels[r.SeverityLevel], r.InstanceCount,
+			r.SecurityGroupID, r.PortRange, *r.Permissions.IpProtocol,
+			*ip.CidrIpv6, *ip.Description})
+	}
+	for _, segment := range segments {
+		switch rf {
+		case ResultFormatLogColor:
+			sb.WriteString(r.Color.Sprintf("[%s] [%4d] [%-20s] %s/%s <- %s [%s]\n", segment...))
+		case ResultFormatLog:
+			sb.WriteString(fmt.Sprintf("[%s] [%4d] [%-20s] %s/%s <- %s [%s]\n", segment...))
+		case ResultFormatCSV:
+			cw.Write([]string{levels[r.SeverityLevel], fmt.Sprint(r.InstanceCount),
+				r.SecurityGroupID, r.PortRange, *r.Permissions.IpProtocol,
+				fmt.Sprint(segment[5]), fmt.Sprint(segment[6])})
+		}
+	}
+	if cw != nil {
+		cw.Flush()
+	}
+	return sb.String()
+}
+
+// Print for printing out the logs in color form.
+func (r *Result) Print(format ResultFormat) {
+	fmt.Print(r.String(format))
 }

@@ -100,6 +100,7 @@ func Audit(sg *ec2.SecurityGroup) []Result {
 					IPRange:         ip,
 					SeverityLevel:   SeverityLevelCritical,
 				})
+				continue
 			}
 			if allOpenToIP(ip, r.IpProtocol, r.FromPort, r.ToPort) {
 				rs = append(rs, Result{
@@ -119,6 +120,7 @@ func Audit(sg *ec2.SecurityGroup) []Result {
 					IPv6Range:       ipv6,
 					SeverityLevel:   SeverityLevelCritical,
 				})
+				continue
 			}
 			if allOpenToIPv6(ipv6, r.IpProtocol, r.FromPort, r.ToPort) {
 				rs = append(rs, Result{

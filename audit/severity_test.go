@@ -46,3 +46,7 @@ func TestResult_Print(t *testing.T) {
 		})
 	}
 }
+
+// func TestAudit(t *testing.T) {
+// 	sg := &ec2.SecurityGroup{}
+// }
