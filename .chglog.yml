@@ -3,5 +3,5 @@ deb:
   distribution: []
   urgency: ""
 debug: false
-owner: "Darshil Chanpura <dtchanpura@protonmail.com"
-package-name: "sg-audit"
+owner: Darshil Chanpura <dtchanpura@protonmail.com
+package-name: sg-audit

@@ -1,0 +1,60 @@
+- semver: 1.0.0
+  date: 2021-01-10T12:14:57+05:30
+  packager: Darshil Chanpura <dtchanpura@protonmail.com
+  changes:
+  - commit: ab47aa91ae40c43d72987213d1faebc2d719dd60
+    note: Added nfpm configuration
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+  - commit: 27fb53a54ee6ec20594ea6bdf45ce9392f6d1a34
+    note: Added more formatting improvements
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+  - commit: 146d856c789ae617807dd34d32b36e169c766717
+    note: Added comments and a testcase fix
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+  - commit: 8a3aef0416a66555e0b45578d26871714e4bc14a
+    note: Added formatting and other details
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+  - commit: 1eb5f57e28e32ca625713fe4028212d95f81963f
+    note: 'Update: added some minor formatting changes'
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+  - commit: db0e0048013663160f591fb32047c2a3031fa2cb
+    note: Added code for audit checks
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+  - commit: fd4379d61047083f7b1fce6ee0d107304514c3dd
+    note: Initial Commit
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
