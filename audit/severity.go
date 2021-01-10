@@ -11,8 +11,14 @@ import (
 )
 
 const (
+	// SeverityLevelNone is the initial level
+	SeverityLevelNone SeverityLevel = iota
+	// SeverityLevelChecked can be ignored as it has already been checked
+	SeverityLevelChecked
+	// SeverityLevelSkip can be skipped
+	SeverityLevelSkip
 	// SeverityLevelWarning can be ok
-	SeverityLevelWarning SeverityLevel = iota
+	SeverityLevelWarning
 	// SeverityLevelCritical can be disasterous
 	SeverityLevelCritical
 )
@@ -28,9 +34,11 @@ const (
 
 var (
 	levels = []string{
-		"WARN", "CRIT", "SKIP",
+		"NONE", "CHCK", "SKIP", "WARN", "CRIT",
 	}
-
+	colors = []color.Attribute{
+		color.Reset, color.FgGreen, color.FgCyan, color.FgYellow, color.FgRed,
+	}
 	// CSVHeader with columns
 	CSVHeader = strings.Join([]string{"Level", "Instance Count", "Group ID", "Port Range", "Protocol", "IP CIDR", "Description"}, ",")
 )
@@ -55,12 +63,7 @@ type Result struct {
 
 // AddColor to update the color
 func (r *Result) AddColor() {
-	if r.SeverityLevel == SeverityLevelCritical {
-		r.Color = color.New(color.FgRed)
-	}
-	if r.SeverityLevel == SeverityLevelWarning {
-		r.Color = color.New(color.FgYellow)
-	}
+	r.Color = color.New(colors[int(r.SeverityLevel)])
 	if r.InstanceCount > 0 {
 		r.Color = r.Color.Add(color.Bold)
 	}
@@ -70,36 +73,6 @@ func (r *Result) AddColor() {
 		r.PortRange = fmt.Sprintf("%d", *r.Permissions.FromPort)
 	} else {
 		r.PortRange = fmt.Sprintf("%d-%d", *r.Permissions.FromPort, *r.Permissions.ToPort)
-	}
-	if r.Permissions.IpRanges != nil && r.IPRange != nil {
-		for _, ip := range r.Permissions.IpRanges {
-			if *ip.CidrIp == *r.IPRange.CidrIp {
-				if ip.Description == nil {
-					ip.Description = aws.String("-")
-				}
-				if strings.Contains(*ip.Description, "sgaudit:skip") {
-					r.Color = r.Color.Add(color.FgCyan)
-				}
-				if strings.Contains(*ip.Description, "sgaudit:checked") {
-					r.Color = r.Color.Add(color.FgGreen)
-				}
-			}
-		}
-	}
-	if r.Permissions.Ipv6Ranges != nil && r.IPv6Range != nil {
-		for _, ipv6 := range r.Permissions.Ipv6Ranges {
-			if *ipv6.CidrIpv6 == *r.IPv6Range.CidrIpv6 {
-				if ipv6.Description == nil {
-					ipv6.Description = aws.String("-")
-				}
-				if ipv6.Description != nil && strings.Contains(*ipv6.Description, "sgaudit:skip") {
-					r.Color = r.Color.Add(color.FgCyan)
-				}
-				if strings.Contains(*ipv6.Description, "sgaudit:checked") {
-					r.Color = r.Color.Add(color.FgGreen)
-				}
-			}
-		}
 	}
 }
 
