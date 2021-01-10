@@ -1,0 +1,19 @@
+name: "sg-audit"
+arch: "amd64"
+platform: "linux"
+version: "v1.0.0"
+section: "default"
+priority: "extra"
+provides:
+- sg-audit
+maintainer: "Darshil Chanpura <dtchanpura@protonmail.com>"
+description: |
+  sg-audit is a command-line tool to check any issues with
+  Security Groups for an AWS account, like vunerable to attacks.
+vendor: "dcpri.me"
+homepage: "http://dcpri.me/tools/sg-audit"
+license: "MIT"
+changelog: "changelog.yaml"
+contents:
+- src: ./release/sg-audit-linux-amd64
+  dst: /usr/local/bin/sg-audit
