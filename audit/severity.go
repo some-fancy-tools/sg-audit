@@ -53,6 +53,7 @@ type Result struct {
 	PortRange       string
 }
 
+// AddColor to update the color
 func (r *Result) AddColor() {
 	if r.SeverityLevel == SeverityLevelCritical {
 		r.Color = color.New(color.FgRed)

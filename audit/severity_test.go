@@ -42,7 +42,7 @@ func TestResult_Print(t *testing.T) {
 				IPRange:       tt.fields.IPRange,
 				SeverityLevel: tt.fields.SeverityLevel,
 			}
-			r.Print()
+			r.Print(ResultFormatCSV)
 		})
 	}
 }
