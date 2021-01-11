@@ -1,6 +1,6 @@
 - semver: 1.0.0
   date: 2021-01-10T12:14:57+05:30
-  packager: Darshil Chanpura <dtchanpura@protonmail.com
+  packager: Darshil Chanpura <dtchanpura@protonmail.com>
   changes:
   - commit: ab47aa91ae40c43d72987213d1faebc2d719dd60
     note: Added nfpm configuration

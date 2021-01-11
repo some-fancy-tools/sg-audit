@@ -1,7 +1,7 @@
 name: "sg-audit"
 arch: "amd64"
 platform: "linux"
-version: "v1.0.0"
+version: "v1.0.1"
 section: "default"
 priority: "extra"
 provides:
@@ -13,7 +13,7 @@ description: |
 vendor: "dcpri.me"
 homepage: "http://dcpri.me/tools/sg-audit"
 license: "MIT"
-changelog: "changelog.yaml"
+changelog: "changelog.yml"
 contents:
 - src: ./release/sg-audit-linux-amd64
   dst: /usr/local/bin/sg-audit
