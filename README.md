@@ -36,7 +36,17 @@ Usage of sg-audit:
         AWS Region to use
 ```
 
+## Screenshot
+
 ![screenshot](docs/screenshot.png)
+
+## Legends
+
+* **BOLD** indicates atleast one instance is attached with this security group
+* `[CRIT]` or the line in red indicates the rule is open to internet
+* `[WARN]` or the line in yellow indicates the rule is all ports are open to one of the IP
+* `[SKIP]` or the line in cyan indicates the rule is marked as skip in Description
+* `[CHCK]` or the line in green indicates the rule is marked as checked in Description
 
 # LICENSE
 MIT
