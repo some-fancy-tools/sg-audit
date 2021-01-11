@@ -1,1 +1,4 @@
 /vendor/
+*.rpm
+*.deb
+/release/
