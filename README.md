@@ -45,8 +45,23 @@ Usage of sg-audit:
 * **BOLD** indicates atleast one instance is attached with this security group
 * `[CRIT]` or the line in red indicates the rule is open to internet
 * `[WARN]` or the line in yellow indicates the rule is all ports are open to one of the IP
-* `[SKIP]` or the line in cyan indicates the rule is marked as skip in Description
-* `[CHCK]` or the line in green indicates the rule is marked as checked in Description
+* `[SKIP]` or the line in cyan indicates the rule is marked as skip in Rule Description
+* `[CHCK]` or the line in green indicates the rule is marked as checked in Rule Description
+
+# Installation
+
+There are repositories available for RHEL/Debian based systems. More
+information can be found on https://repo.dcpri.me and installation is simply
+
+```sh
+sudo apt install sg-audit # debian
+# or 
+sudo yum install sg-audit # older RHEL based OS
+# or
+sudo dnf install sg-audit # other RHEL based OS
+```
+
+For macOS download the binary from Releases tab. Won't recommend the arm64 build yet.
 
 # LICENSE
 MIT
