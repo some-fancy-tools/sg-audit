@@ -36,5 +36,7 @@ Usage of sg-audit:
         AWS Region to use
 ```
 
+![screenshot](docs/screenshot.png)
+
 # LICENSE
 MIT
