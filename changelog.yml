@@ -1,3 +1,31 @@
+- semver: 1.0.1
+  date: 2021-01-11T11:53:31.254571+05:30
+  packager: Darshil Chanpura <dtchanpura@protonmail.com>
+  changes:
+  - commit: 933b4d5055e82d3c78d1ec5217fd50a522b38008
+    note: Version 1.0.1
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+  - commit: 28d8e5b22b193620b73ca5242c249215f13f11e3
+    note: 'Update: added some files in .gitignore'
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+  - commit: 538794d59e8daaef1731f49f4f48f5029b14f815
+    note: Updated Changelog
+    author:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
+    committer:
+      name: Darshil Chanpura
+      email: dtchanpura@protonmail.com
 - semver: 1.0.0
   date: 2021-01-10T12:14:57+05:30
   packager: Darshil Chanpura <dtchanpura@protonmail.com>
