@@ -14,5 +14,27 @@ unnecessary ports that are open.
 * Check for any 0.0.0.0/0 or ::/0 values other than 80 and 443
 * Check for All Traffic open as well, ports 0-65535
 
+# Usage
+
+There are some options available as of now.
+
+* -csv for printing out in CSV format, this can be helpful for showing it in
+reports.
+* -no-color for disabling the color output.
+* -profile and -region for AWS Profile (credentials) and Region to use.
+
+```
+$ sg-audit -h
+Usage of sg-audit:
+  -csv
+        Output in CSV Format
+  -no-color
+        No Colored output
+  -profile string
+        AWS Profile to use
+  -region string
+        AWS Region to use
+```
+
 # LICENSE
 MIT
